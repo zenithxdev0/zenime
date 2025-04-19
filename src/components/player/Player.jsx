@@ -20,6 +20,7 @@ import {
   playIcon,
   playIconLg,
   settingsIcon,
+  uploadIcon,
   volumeIcon,
 } from "./PlayerIcons";
 import "./Player.css";
@@ -59,6 +60,8 @@ export default function Player({
   streamInfo,
 }) {
   const artRef = useRef(null);
+  const artInstance = useRef(null);
+  const fileInputRef = useRef(null);
   const proxy = import.meta.env.VITE_PROXY_URL;
   const m3u8proxy = import.meta.env.VITE_M3U8_PROXY_URL?.split(",") || [];
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(
@@ -66,7 +69,25 @@ export default function Player({
       (episode) => episode.id.match(/ep=(\d+)/)?.[1] === episodeId
     )
   );
+  const handleSubtitleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !artInstance.current) return;
 
+    let url;
+    if (file.name.endsWith(".srt")) {
+      const srtText = await file.text();
+      const vttText =
+        "WEBVTT\n\n" + srtText.replace(/\d+\n/g, "").replace(/,/g, ".");
+      const blob = new Blob([vttText], { type: "text/vtt" });
+      url = URL.createObjectURL(blob);
+    } else {
+      url = URL.createObjectURL(file);
+    }
+    artInstance.current.subtitle.switch(url, { name: file.name });
+
+    // clean up old object URLs on next upload
+    e.target.value = "";
+  };
   useEffect(() => {
     if (episodes?.length > 0) {
       const newIndex = episodes.findIndex(
@@ -207,7 +228,6 @@ export default function Player({
         break;
     }
   };
-
   useEffect(() => {
     if (!streamUrl || !artRef.current) return;
     const iframeUrl = streamInfo?.streamingLink?.iframe;
@@ -369,6 +389,12 @@ export default function Player({
             art.currentTime = Math.min(art.currentTime + 10, art.duration);
           },
         },
+        {
+          html: uploadIcon,
+          position: "right",
+          tooltip: "Upload Subtitle",
+          click: () => fileInputRef.current.click(),
+        },
       ],
       icons: {
         play: playIcon,
@@ -386,7 +412,7 @@ export default function Player({
         m3u8: playM3u8,
       },
     });
-
+    artInstance.current = art;
     art.on("resize", () => {
       art.subtitle.style({
         fontSize:
@@ -520,5 +546,17 @@ export default function Player({
     };
   }, [streamUrl, subtitles, intro, outro]);
 
-  return <div ref={artRef} className="w-full h-full"></div>;
+  return (
+    <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept=".srt,.vtt"
+        style={{ display: "none" }}
+        onChange={handleSubtitleUpload}
+      />
+      {/* Player container */}
+      <div ref={artRef} className="w-full h-full" />
+    </>
+  );
 }
