@@ -222,10 +222,9 @@ export default function Player({
     const art = new Artplayer({
       url:
         m3u8proxy[Math.floor(Math.random() * m3u8proxy?.length)] +
-        streamUrl.split("/").pop() +
-        `?referer=${headers.Referer}` +
-        "&src=" +
-        encodeURIComponent(streamUrl),
+        encodeURIComponent(streamUrl) +
+         "&headers=" +
+         encodeURIComponent(JSON.stringify(headers)),
       container: artRef.current,
       type: "m3u8",
       autoplay: autoPlay,
