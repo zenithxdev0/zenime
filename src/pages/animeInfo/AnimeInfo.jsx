@@ -16,7 +16,7 @@ import { useLanguage } from "@/src/context/LanguageContext";
 import { useHomeInfo } from "@/src/context/HomeInfoContext";
 import Voiceactor from "@/src/components/voiceactor/Voiceactor";
 
-function InfoItem({ label, value, isProducer = true }) { 
+function InfoItem({ label, value, isProducer = true }) {
   return (
     value && (
       <div className="text-[14px] font-bold">
@@ -225,13 +225,25 @@ function AnimeInfo({ random = false }) {
                 )}
               </div>
             </div>
-            <Link
-              to={`/watch/${animeInfo.id}`}
-              className="flex gap-x-2 px-6 py-2 bg-[#FFBADE] w-fit text-black items-center rounded-3xl mt-5"
-            >
-              <FontAwesomeIcon icon={faPlay} className="text-[14px] mt-[1px]" />
-              <p className="text-lg font-medium">Watch Now</p>
-            </Link>
+            {animeInfo?.animeInfo?.Status?.toLowerCase() !== "not-yet-aired" ? (
+              <Link
+                to={`/watch/${animeInfo.id}`}
+                className="flex gap-x-2 px-6 py-2 bg-[#FFBADE] w-fit text-black items-center rounded-3xl mt-5"
+              >
+                <FontAwesomeIcon
+                  icon={faPlay}
+                  className="text-[14px] mt-[1px]"
+                />
+                <p className="text-lg font-medium">Watch Now</p>
+              </Link>
+            ) : (
+              <Link
+                to={`/${animeInfo.id}`}
+                className="flex gap-x-2 px-6 py-2 bg-[#FFBADE] w-fit text-black items-center rounded-3xl mt-5"
+              >
+                <p className="text-lg font-medium">Not released</p>
+              </Link>
+            )}
             {info?.Overview && (
               <div className="text-[14px] mt-2 max-[575px]:hidden">
                 {info.Overview.length > 270 ? (

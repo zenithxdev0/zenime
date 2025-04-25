@@ -78,6 +78,7 @@ function Category({ path, label }) {
                   showViewMore={false}
                   className={"mt-0"}
                   categoryPage={true}
+                  path={path}
                 />
               )}
               <PageSlider

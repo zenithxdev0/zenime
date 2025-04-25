@@ -121,8 +121,16 @@ const CategoryCard = React.memo(
                 >
                   <div
                     className="w-full relative group hover:cursor-pointer"
-                    onClick={() => navigate(`/watch/${item.id}`)}
-                    onMouseEnter={() => handleMouseEnter(item,index)}
+                    onClick={() =>
+                      navigate(
+                        `${
+                          path === "top-upcoming"
+                            ? `/${item.id}`
+                            : `/watch/${item.id}`
+                        }`
+                      )
+                    }
+                    onMouseEnter={() => handleMouseEnter(item, index)}
                     onMouseLeave={handleMouseLeave}
                   >
                     {hoveredItem === item.id + index && showPlay && (
@@ -229,7 +237,15 @@ const CategoryCard = React.memo(
               >
                 <div
                   className="w-full relative group hover:cursor-pointer"
-                  onClick={() => navigate(`/watch/${item.id}`)}
+                  onClick={() =>
+                    navigate(
+                      `${
+                        path === "top-upcoming"
+                          ? `/${item.id}`
+                          : `/watch/${item.id}`
+                      }`
+                    )
+                  }
                   onMouseEnter={() => handleMouseEnter(item, index)}
                   onMouseLeave={handleMouseLeave}
                 >
